@@ -86,23 +86,23 @@ export function Chat({
     // note: this hook has no dependencies since it only needs to run once
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  /** Search Params */
+  const SEARCH_PARAMS = useSearchParams();
+  const QUERY = SEARCH_PARAMS.get('query');
 
-  const searchParams = useSearchParams();
-  const query = searchParams.get('query');
-
-  const [hasAppendedQuery, setHasAppendedQuery] = useState(false);
+  const [has_appended_query, setHasAppendedQuery] = useState(false);
 
   useEffect(() => {
-    if (query && !hasAppendedQuery) {
+    if (QUERY && !has_appended_query) {
       append({
         role: 'user',
-        content: query,
+        content: QUERY,
       });
 
       setHasAppendedQuery(true);
       window.history.replaceState({}, '', `/chat/${id}`);
     }
-  }, [query, append, hasAppendedQuery, id]);
+  }, [QUERY, append, has_appended_query, id]);
 
   const { data: votes } = useSWR<Array<Vote>>(
     messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
@@ -110,7 +110,7 @@ export function Chat({
   );
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
-  const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
+  const IS_ARTIFACT_VISIBLE = useArtifactSelector((state) => state.isVisible);
 
   return (
     <div>
@@ -123,7 +123,7 @@ export function Chat({
           session={session}
         />
 
-        <div className=" flex flex-col overflow-hidden md:items-center md:justify-center justify-between flex-grow min-h-0 h-dvh w-full">
+        <div className="flex flex-col md:items-center md:justify-center justify-between flex-grow min-h-0">
           <Messages
             chatId={id}
             status={status}
@@ -132,7 +132,7 @@ export function Chat({
             setMessages={setMessages}
             reload={reload}
             isReadonly={isReadonly}
-            isArtifactVisible={isArtifactVisible}
+            isArtifactVisible={IS_ARTIFACT_VISIBLE}
           />
           <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
             {!isReadonly && (

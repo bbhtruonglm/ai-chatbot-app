@@ -350,7 +350,7 @@ function PureMultimodalInput({
 
       {/** Smart prompts suggestions */}
 
-      <div className="hidden md:flex flex-row flex-grow min-w-0 min-h-0 gap-2 bg-transparent py-2 overflow-hidden overflow-x-auto">
+      <div className="flex flex-row flex-grow min-h-0 overflow-hidden overflow-x-auto gap-2 bg-transparent py-2 ">
         {LIST_TAGS.map((tag, index) => (
           <TagWithIcon
             // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
@@ -482,9 +482,18 @@ function PureMultimodalInput({
                   //   submitForm={submitForm}
                   //   uploadQueue={upload_queue}
                   // />
-                  <div className="p-2 bg-white rounded-full cursor-pointer">
-                    <ArrowUpIcon1 className="size-5 text-black" />
-                  </div>
+                  <button
+                    disabled={input.length === 0 || upload_queue.length > 0}
+                    // submitForm={submitForm}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      submitForm();
+                    }}
+                    // uploadQueue={upload_queue}
+                    className="p-2 bg-white rounded-full cursor-pointer "
+                  >
+                    <ArrowUpIcon1 className="size-5 text-black flex-shrink-0" />
+                  </button>
                 )}
               </div>
             )}
