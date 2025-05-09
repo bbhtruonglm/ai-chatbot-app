@@ -24,6 +24,7 @@ import {
 import { ArrowDown } from 'lucide-react';
 import PopoverHistory from './Popover/PopoverHistory';
 import PopoverSetup from './Popover/PopoverSetup';
+import PopoverHistoryBar2 from './Popover/PopoverHistoryBar2';
 
 function PureChatHeader({
   chatId,
@@ -58,6 +59,7 @@ function PureChatHeader({
           />
         </div>
         <div className="md:hidden">
+          {/* <PopoverHistoryBar2 user={session.user} /> */}
           <Bars2Icon className="size-6" />
         </div>
       </div>
@@ -112,10 +114,9 @@ function PureChatHeader({
         >
           <PencilSquareIcon className="size-6" />
         </div>
-        {/* <div className="hidden md:flex cursor-pointer">
-          <Bars3BottomLeftIcon className="size-6 " />
-        </div> */}
-        <PopoverHistory user={session.user} />
+        <div className="hidden md:flex cursor-pointer">
+          <PopoverHistory user={session.user} />
+        </div>
 
         <PopoverSetup user={session.user} />
       </div>
