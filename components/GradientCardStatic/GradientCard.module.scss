@@ -1,0 +1,49 @@
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+.card {
+  //   padding: 1em;
+  //   width: 120px; /* Kích thước card cố định */
+  background:red;
+  text-align: center;
+  border-radius: 40px;
+  margin: 0 auto;
+  position: relative;
+  cursor: pointer;
+}
+.card::after,
+.card::before {
+  content: '';
+  position: absolute;
+  height: calc(100%);
+  width: calc(90%);
+  /** tuỳ theo deg sẽ chạy đến các vị trí của card theo góc tương ứng deg */
+  background: conic-gradient(
+    from var(--angle),
+   #FFFEF566
+  );
+
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  z-index: -1;
+  padding: 3px;
+  border-radius: 100px;
+  /** animation để thay đổi góc card */
+  // animation: spin 3s linear infinite;
+}
+.card::before {
+  filter: blur(80px);
+  // opacity: 0.5;
+}
+/* Define the spin animation */
+@keyframes spin {
+  // from {
+  //   --angle: 0deg;
+  // }
+  // to {
+  //   --angle: 360deg;
+  // }
+}

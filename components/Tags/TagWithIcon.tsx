@@ -19,14 +19,18 @@ const TagWithIcon = ({
   return (
     <div
       onClick={props.onClick}
-      className={`flex items-center gap-2 p-3 border-2 rounded-full w-fit bg-zinc-900 cursor-pointer hover:bg-zinc-700 ${is_active ? 'bg-white text-black' : ''}`}
+      className={`flex md:items-center flex-col md:flex-row gap-2 p-3 border-2 rounded-[24px] w-fit cursor-pointer  hover:bg-zinc-700  ${is_active ? 'bg-zinc-700 text-white dark:bg-white dark:text-black' : ''}`}
     >
-      {type === 'brand_boosting' && <MegaphoneIcon className="size-6" />}
-      {type === 'cv_checker' && <IdentificationIcon className="size-6" />}
-      {type === 'business_planner' && <FlagIcon className="size-6" />}{' '}
-      {type === 'coder' && <CommandLineIcon className="size-6" />}
-      {type === 'more' && <ViewfinderCircleIcon className="size-6" />}
-      <span className={`text-sm`}>{label}</span>
+      <div className={`${is_active ? 'text-black' : 'text-zinc-500'} `}>
+        {type === 'brand_boosting' && <MegaphoneIcon className="size-6" />}
+        {type === 'cv_checker' && <IdentificationIcon className="size-6" />}
+        {type === 'business_planner' && <FlagIcon className="size-6" />}{' '}
+        {type === 'coder' && <CommandLineIcon className="size-6" />}
+        {type === 'more' && <ViewfinderCircleIcon className="size-6" />}
+      </div>
+      <div className={`text-sm flex-shrink-0 w-fit whitespace-nowrap`}>
+        {label}
+      </div>
     </div>
   );
 };

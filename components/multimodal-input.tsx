@@ -28,9 +28,15 @@ import { ArrowDown } from 'lucide-react';
 import { useScrollToBottom } from '@/hooks/use-scroll-to-bottom';
 import type { VisibilityType } from './visibility-selector';
 import TagWithIcon from './Tags/TagWithIcon';
-import { PlusCircleIcon } from '@heroicons/react/24/solid';
+import {
+  ArrowUpCircleIcon,
+  MicrophoneIcon,
+  PlusCircleIcon,
+  ArrowUpIcon as ArrowUpIcon1,
+  StopCircleIcon,
+} from '@heroicons/react/24/solid';
 import ThinkMode from './Tags/ThinkMode';
-
+import styles from './GradientCardStatic/GradientCard.module.scss';
 function PureMultimodalInput({
   chatId,
   input,
@@ -306,7 +312,7 @@ function PureMultimodalInput({
   }, [status, scrollToBottom]);
 
   return (
-    <div className="relative w-full flex flex-col gap-4">
+    <div className="relative flex w-full flex-col bg-transparent ">
       <AnimatePresence>
         {!isAtBottom && (
           <motion.div
@@ -343,7 +349,8 @@ function PureMultimodalInput({
         )} */}
 
       {/** Smart prompts suggestions */}
-      <div className="flex flex-row gap-2">
+
+      <div className="hidden md:flex flex-row flex-grow min-w-0 min-h-0 gap-2 bg-transparent py-2 overflow-hidden overflow-x-auto">
         {LIST_TAGS.map((tag, index) => (
           <TagWithIcon
             // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
@@ -351,18 +358,28 @@ function PureMultimodalInput({
             type={tag.type}
             label={tag.label}
             onClick={() => {
+              if (tag.type === suggested_mode) {
+                // Bỏ chọn nếu tag đã active
+                setSuggestedMode('');
+                setInput((prev) => {
+                  const regex = new RegExp(`@${tag.type}\\s`);
+                  return prev.replace(regex, '');
+                });
+                return;
+              }
+
               setSuggestedMode(tag.type);
+
               if (tag.type === 'more') {
                 return;
               }
+
               setInput((prev) => {
                 const regex = /@\w+\s/; // Tìm bất kỳ tag nào dạng @type
                 if (regex.test(prev)) {
-                  // Nếu đã có tag, thay thế tag đầu tiên tìm thấy với tag mới
                   // biome-ignore lint/style/useTemplate: <explanation>
                   return prev.replace(regex, '@' + tag.type + ' ');
                 } else {
-                  // Nếu chưa có tag, thêm mới vào đầu
                   // biome-ignore lint/style/useTemplate: <explanation>
                   return '@' + tag.type + ' ' + prev;
                 }
@@ -405,57 +422,73 @@ function PureMultimodalInput({
         </div>
       )}
 
-      <div>
-        <Textarea
-          data-testid="multimodal-input"
-          ref={TEXT_AREA_REF}
-          placeholder="Send a message..."
-          value={input}
-          onChange={handleInput}
-          className={cx(
-            'min-h-6 max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base bg-muted pb-14 dark:border-zinc-700',
-            className,
-          )}
-          rows={2}
-          autoFocus
-          onKeyDown={(event) => {
-            if (
-              event.key === 'Enter' &&
-              !event.shiftKey &&
-              !event.nativeEvent.isComposing
-            ) {
-              event.preventDefault();
+      <div className="flex justify-center items-center z-10">
+        <div className={`w-full ${styles.card}`}>
+          <Textarea
+            data-testid="multimodal-input"
+            ref={TEXT_AREA_REF}
+            placeholder="Send a message..."
+            value={input}
+            onChange={handleInput}
+            className={cx(
+              'min-h-6 max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base bg-muted pb-14 dark:border-zinc-700 dark:bg-zinc-950',
+              className,
+            )}
+            rows={2}
+            autoFocus
+            onKeyDown={(event) => {
+              if (
+                event.key === 'Enter' &&
+                !event.shiftKey &&
+                !event.nativeEvent.isComposing
+              ) {
+                event.preventDefault();
 
-              if (status !== 'ready') {
-                toast.error(
-                  'Please wait for the model to finish its response!',
-                );
-              } else {
-                submitForm();
+                if (status !== 'ready') {
+                  toast.error(
+                    'Please wait for the model to finish its response!',
+                  );
+                } else {
+                  submitForm();
+                }
               }
-            }
-          }}
-        />
-
-        <div className="absolute bottom-3 left-3 w-fit flex items-center gap-2 flex-row justify-start rounded-full">
-          <AttachmentsButton fileInputRef={FILE_INPUT_REF} status={status} />
-
-          <ThinkMode
-            onClick={() => setAiMode('think')}
-            is_active={ai_mode === 'think'}
+            }}
           />
-        </div>
 
-        <div className="absolute bottom-3 right-3 p-2 w-fit flex flex-row justify-end">
-          {status === 'submitted' ? (
-            <StopButton stop={stop} setMessages={setMessages} />
-          ) : (
-            <SendButton
-              input={input}
-              submitForm={submitForm}
-              uploadQueue={upload_queue}
+          <div className="absolute bottom-3 left-3 w-fit flex items-center gap-2 flex-row justify-start rounded-full">
+            <AttachmentsButton fileInputRef={FILE_INPUT_REF} status={status} />
+
+            <ThinkMode
+              onClick={() => setAiMode('think')}
+              is_active={ai_mode === 'think'}
             />
-          )}
+          </div>
+
+          <div className="absolute bottom-3 right-3 rounded-full w-fit flex flex-row justify-end">
+            {!input ? (
+              <div className="p-2 bg-white rounded-full cursor-pointer">
+                <MicrophoneIcon className="size-5 text-black" />
+              </div>
+            ) : (
+              <div>
+                {status === 'submitted' ? (
+                  // <StopButton stop={stop} setMessages={setMessages} />
+                  <div className="p-2 bg-white rounded-full cursor-pointer">
+                    <StopCircleIcon className="size-5 text-black" />
+                  </div>
+                ) : (
+                  // <SendButton
+                  //   input={input}
+                  //   submitForm={submitForm}
+                  //   uploadQueue={upload_queue}
+                  // />
+                  <div className="p-2 bg-white rounded-full cursor-pointer">
+                    <ArrowUpIcon1 className="size-5 text-black" />
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -543,7 +576,7 @@ function PureSendButton({
       }}
       disabled={input.length === 0 || uploadQueue.length > 0}
     >
-      <ArrowUpIcon size={14} />
+      <ArrowUpIcon size={20} />
     </Button>
   );
 }

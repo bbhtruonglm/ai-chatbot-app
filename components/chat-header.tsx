@@ -13,6 +13,15 @@ import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { type VisibilityType, VisibilitySelector } from './visibility-selector';
 import type { Session } from 'next-auth';
+import Image from 'next/image';
+import {
+  Bars2Icon,
+  Bars3BottomLeftIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  PencilSquareIcon,
+} from '@heroicons/react/24/solid';
+import { ArrowDown } from 'lucide-react';
 
 function PureChatHeader({
   chatId,
@@ -33,43 +42,88 @@ function PureChatHeader({
   const { width: windowWidth } = useWindowSize();
 
   return (
-    <header className="flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2">
-      <SidebarToggle />
+    <header className="flex sticky top-0 bg-background py-3 px-3 items-center justify-between md:px-8 gap-2">
+      {/* <SidebarToggle /> */}
+      <div className="">
+        <div className="hidden md:flex">
+          <Image
+            src="/images/retion-agent.svg"
+            alt="Retion Logo"
+            width={32}
+            height={32}
+          />
+        </div>
+        <div className="md:hidden">
+          <Bars2Icon className="size-6" />
+        </div>
+      </div>
 
-      {(!open || windowWidth < 768) && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="outline"
-              className="order-2 md:order-1 md:px-2 px-2 md:h-fit ml-auto md:ml-0"
-              onClick={() => {
-                router.push('/');
-                router.refresh();
-              }}
-            >
-              <PlusIcon />
-              <span className="md:sr-only">New Chat</span>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>New Chat</TooltipContent>
-        </Tooltip>
-      )}
-
-      {!isReadonly && (
+      {/* {!isReadonly && (
         <ModelSelector
           session={session}
           selectedModelId={selectedModelId}
-          className="order-1 md:order-2"
+          className=""
         />
-      )}
+      )} */}
+      <div className="flex gap-2 items-center">
+        <div className="bg-green-500 rounded-full size-2.5" />
+        <h4 className="text-lg font-semibold">Terminal</h4>
+        <ChevronRightIcon className="size-4 text-gray-500" />
+      </div>
 
-      {!isReadonly && (
+      {/* {!isReadonly && (
         <VisibilitySelector
           chatId={chatId}
           selectedVisibilityType={selectedVisibilityType}
           className="order-1 md:order-3"
         />
-      )}
+      )} */}
+
+      <div className="flex gap-5 items-center">
+        {/* {(!open || windowWidth < 768) && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                className="md:px-2 px-2 md:h-fit ml-auto md:ml-0"
+                onClick={() => {
+                  router.push('/');
+                  router.refresh();
+                }}
+              >
+                <PencilSquareIcon className="size-6" />
+                <span className="md:sr-only">New Chat</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>New Chat</TooltipContent>
+          </Tooltip>
+        )} */}
+        {/* biome-ignore lint/nursery/noStaticElementInteractions: <explanation> */}
+        <div
+          onClick={() => {
+            router.push('/');
+            router.refresh();
+          }}
+          className="cursor-pointer hidden md:flex"
+        >
+          <PencilSquareIcon className="size-6" />
+        </div>
+        <div>
+          <Bars3BottomLeftIcon className="size-6 cursor-pointer hidden md:flex" />
+        </div>
+        <div className="flex items-center gap-2 cursor-pointer">
+          <Image
+            src="/images/Avatar.png"
+            alt="Avatar"
+            width={28}
+            height={28}
+            className="rounded-full"
+          />
+          <div className="hidden md:flex">
+            <ChevronDownIcon className="size-4 text-gray-500" />
+          </div>
+        </div>
+      </div>
 
       {/* <Button
         className="bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-zinc-50 dark:text-zinc-900 hidden md:flex py-1.5 px-2 h-fit md:h-[34px] order-4 md:ml-auto"

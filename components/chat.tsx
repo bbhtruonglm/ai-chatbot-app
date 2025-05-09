@@ -113,8 +113,8 @@ export function Chat({
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
   return (
-    <>
-      <div className="flex flex-col min-w-0 h-dvh bg-background">
+    <div>
+      <div className="flex flex-col h-dvh">
         <ChatHeader
           chatId={id}
           selectedModelId={initialChatModel}
@@ -123,7 +123,7 @@ export function Chat({
           session={session}
         />
 
-        <div className="relative flex flex-col overflow-hidden overflow-y-auto items-center justify-center grow-0 min-h-0 h-full">
+        <div className=" flex flex-col overflow-hidden md:items-center md:justify-center justify-between flex-grow min-h-0 h-dvh w-full">
           <Messages
             chatId={id}
             status={status}
@@ -134,7 +134,6 @@ export function Chat({
             isReadonly={isReadonly}
             isArtifactVisible={isArtifactVisible}
           />
-
           <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
             {!isReadonly && (
               <MultimodalInput
@@ -153,11 +152,10 @@ export function Chat({
               />
             )}
           </form>
-          {/* <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[120%] h-5 bg-cyan-400 opacity-40 rounded-full blur-md animate-glow" /> */}
         </div>
       </div>
 
-      <Artifact
+      {/* <Artifact
         chatId={id}
         input={input}
         setInput={setInput}
@@ -173,7 +171,7 @@ export function Chat({
         votes={votes}
         isReadonly={isReadonly}
         selectedVisibilityType={visibilityType}
-      />
-    </>
+      /> */}
+    </div>
   );
 }

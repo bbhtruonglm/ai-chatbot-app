@@ -72,14 +72,24 @@ const config: Config = {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        animation: {
+          glow: 'glow 2s ease-in-out infinite',
+        },
         keyframes: {
           glow: {
-            '0%, 100%': { opacity: '0.3' },
-            '50%': { opacity: '0.6' },
+            '0%, 100%': {
+              boxShadow:
+                '0 0 5px rgba(34, 211, 238, 0.3), 0 0 10px rgba(34, 211, 238, 0.2), 0 0 15px rgba(34, 211, 238, 0.1)',
+              background:
+                'linear-gradient(180deg, rgba(34, 211, 238, 0.1), rgba(34, 211, 238, 0.05))',
+            },
+            '50%': {
+              boxShadow:
+                '0 0 10px rgba(34, 211, 238, 0.5), 0 0 20px rgba(34, 211, 238, 0.4), 0 0 30px rgba(34, 211, 238, 0.3)',
+              background:
+                'linear-gradient(180deg, rgba(34, 211, 238, 0.2), rgba(34, 211, 238, 0.1))',
+            },
           },
-        },
-        animation: {
-          glow: 'glow 3s ease-in-out infinite',
         },
       },
     },
