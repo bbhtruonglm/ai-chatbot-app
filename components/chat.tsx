@@ -1,23 +1,24 @@
 'use client';
 
 import type { Attachment, UIMessage } from 'ai';
-import { useChat } from '@ai-sdk/react';
+import { fetcher, generateUUID } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
-import { ChatHeader } from '@/components/chat-header';
-import type { Vote } from '@/lib/db/schema';
-import { fetcher, generateUUID } from '@/lib/utils';
+
 import { Artifact } from './artifact';
-import { MultimodalInput } from './multimodal-input';
+import { ChatHeader } from '@/components/chat-header';
 import { Messages } from './messages';
+import { MultimodalInput } from './multimodal-input';
+import type { Session } from 'next-auth';
 import type { VisibilityType } from './visibility-selector';
-import { useArtifactSelector } from '@/hooks/use-artifact';
-import { unstable_serialize } from 'swr/infinite';
+import type { Vote } from '@/lib/db/schema';
 import { getChatHistoryPaginationKey } from './sidebar-history';
 import { toast } from './toast';
-import type { Session } from 'next-auth';
-import { useSearchParams } from 'next/navigation';
+import { unstable_serialize } from 'swr/infinite';
+import { useArtifactSelector } from '@/hooks/use-artifact';
+import { useChat } from '@ai-sdk/react';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
+import { useSearchParams } from 'next/navigation';
 
 export function Chat({
   id,
@@ -122,35 +123,38 @@ export function Chat({
           session={session}
         />
 
-        <Messages
-          chatId={id}
-          status={status}
-          votes={votes}
-          messages={messages}
-          setMessages={setMessages}
-          reload={reload}
-          isReadonly={isReadonly}
-          isArtifactVisible={isArtifactVisible}
-        />
+        <div className="relative flex flex-col overflow-hidden overflow-y-auto items-center justify-center grow-0 min-h-0 h-full">
+          <Messages
+            chatId={id}
+            status={status}
+            votes={votes}
+            messages={messages}
+            setMessages={setMessages}
+            reload={reload}
+            isReadonly={isReadonly}
+            isArtifactVisible={isArtifactVisible}
+          />
 
-        <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
-          {!isReadonly && (
-            <MultimodalInput
-              chatId={id}
-              input={input}
-              setInput={setInput}
-              handleSubmit={handleSubmit}
-              status={status}
-              stop={stop}
-              attachments={attachments}
-              setAttachments={setAttachments}
-              messages={messages}
-              setMessages={setMessages}
-              append={append}
-              selectedVisibilityType={visibilityType}
-            />
-          )}
-        </form>
+          <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
+            {!isReadonly && (
+              <MultimodalInput
+                chatId={id}
+                input={input}
+                setInput={setInput}
+                handleSubmit={handleSubmit}
+                status={status}
+                stop={stop}
+                attachments={attachments}
+                setAttachments={setAttachments}
+                messages={messages}
+                setMessages={setMessages}
+                append={append}
+                selectedVisibilityType={visibilityType}
+              />
+            )}
+          </form>
+          {/* <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[120%] h-5 bg-cyan-400 opacity-40 rounded-full blur-md animate-glow" /> */}
+        </div>
       </div>
 
       <Artifact

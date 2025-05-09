@@ -27,6 +27,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
 import { useScrollToBottom } from '@/hooks/use-scroll-to-bottom';
 import type { VisibilityType } from './visibility-selector';
+import TagWithIcon from './Tags/TagWithIcon';
+import { PlusCircleIcon } from '@heroicons/react/24/solid';
+import ThinkMode from './Tags/ThinkMode';
 
 function PureMultimodalInput({
   chatId,
@@ -57,39 +60,79 @@ function PureMultimodalInput({
   className?: string;
   selectedVisibilityType: VisibilityType;
 }) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { width } = useWindowSize();
+  /** Các suggest tag */
+  const LIST_TAGS = [
+    {
+      label: 'Brand Boosting',
+      type: 'brand_boosting',
+    },
+    {
+      label: 'CV Checker',
+      type: 'cv_checker',
+    },
+    {
+      label: 'Business Planner',
+      type: 'business_planner',
+    },
+    {
+      label: 'Coder',
+      type: 'coder',
+    },
+    {
+      label: 'More',
+      type: 'more',
+    },
+  ];
 
+  const TEXT_AREA_REF = useRef<HTMLTextAreaElement>(null);
+  const { width } = useWindowSize();
+  /** Check độ suggested */
+  const [suggested_mode, setSuggestedMode] = useState('');
+  /** AI Mode */
+  const [ai_mode, setAiMode] = useState('');
+  /**
+   * Tính toán chiều cao của textareas
+   */
   useEffect(() => {
-    if (textareaRef.current) {
+    if (TEXT_AREA_REF.current) {
       adjustHeight();
     }
   }, []);
 
+  /**
+   * Hàm tính toán chiều cao của textareas
+   */
   const adjustHeight = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight + 2}px`;
+    if (TEXT_AREA_REF.current) {
+      TEXT_AREA_REF.current.style.height = 'auto';
+      TEXT_AREA_REF.current.style.height = `${TEXT_AREA_REF.current.scrollHeight + 2}px`;
     }
   };
 
+  /**
+   * Hàm reset chiều cao của textareas
+   */
   const resetHeight = () => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = '98px';
+    if (TEXT_AREA_REF.current) {
+      TEXT_AREA_REF.current.style.height = 'auto';
+      TEXT_AREA_REF.current.style.height = '98px';
     }
   };
-
-  const [localStorageInput, setLocalStorageInput] = useLocalStorage(
+  /**
+   * Lay gia tri input tu localStorage
+   */
+  const [local_storage_input, setLocalStorageInput] = useLocalStorage(
     'input',
     '',
   );
-
+  /**
+   * Lay gia tri input tu localStorage
+   */
   useEffect(() => {
-    if (textareaRef.current) {
-      const domValue = textareaRef.current.value;
+    if (TEXT_AREA_REF.current) {
+      const domValue = TEXT_AREA_REF.current.value;
       // Prefer DOM value over localStorage to handle hydration
-      const finalValue = domValue || localStorageInput || '';
+      const finalValue = domValue || local_storage_input || '';
       setInput(finalValue);
       adjustHeight();
     }
@@ -97,31 +140,60 @@ function PureMultimodalInput({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /**
+   * Lay gia tri input tu localStorage
+   */
   useEffect(() => {
     setLocalStorageInput(input);
   }, [input, setLocalStorageInput]);
 
+  /**
+   *  Hàm handle input
+   * @param event
+   */
   const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    /**
+     * Lưu giá trị input
+     */
     setInput(event.target.value);
+    /** tính toán lại chiều cao */
     adjustHeight();
   };
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
+  /**
+   * INput ref
+   */
+  const FILE_INPUT_REF = useRef<HTMLInputElement>(null);
+  /**
+   * Update queue
+   */
+  const [upload_queue, setUploadQueue] = useState<Array<string>>([]);
 
+  /**
+   * Hàm submit form
+   */
   const submitForm = useCallback(() => {
+    /**
+     * Thêm id chat với url
+     */
     window.history.replaceState({}, '', `/chat/${chatId}`);
-
+    /**
+     * Thêm attachment với url
+     */
     handleSubmit(undefined, {
       experimental_attachments: attachments,
     });
-
+    /**
+     * Reset attachment
+     */
     setAttachments([]);
     setLocalStorageInput('');
     resetHeight();
-
+    /**
+     * Focus text area
+     */
     if (width && width > 768) {
-      textareaRef.current?.focus();
+      TEXT_AREA_REF.current?.focus();
     }
   }, [
     attachments,
@@ -132,49 +204,85 @@ function PureMultimodalInput({
     chatId,
   ]);
 
+  /**
+   *  Hàm Upload file
+   * @param file File
+   * @returns
+   */
   const uploadFile = async (file: File) => {
-    const formData = new FormData();
-    formData.append('file', file);
-
+    /** Thêm file với FormData */
+    const FORM_DATA = new FormData();
+    /**
+     * Thêm file với FormData
+     */
+    FORM_DATA.append('file', file);
+    /**
+     * Call API Upload
+     */
     try {
-      const response = await fetch('/api/files/upload', {
+      const RES = await fetch('/api/files/upload', {
         method: 'POST',
-        body: formData,
+        body: FORM_DATA,
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        const { url, pathname, contentType } = data;
-
+      /**
+       * Nếu call api thanh cong
+       */
+      if (RES.ok) {
+        /** Parse data */
+        const DATA = await RES.json();
+        /**
+         * Lay url, pathname, contentType
+         */
+        const { url, pathname, contentType } = DATA;
+        /**
+         * Tra ve attachment
+         */
         return {
           url,
           name: pathname,
           contentType: contentType,
         };
       }
-      const { error } = await response.json();
+      const { error } = await RES.json();
+      /** Hiện toast lỗi */
       toast.error(error);
     } catch (error) {
       toast.error('Failed to upload file, please try again!');
     }
   };
-
+  /**
+   * Hàm handle file change
+   */
   const handleFileChange = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(event.target.files || []);
-
-      setUploadQueue(files.map((file) => file.name));
+      /**
+       * Lay danh sach file
+       */
+      const FILES = Array.from(event.target.files || []);
+      /**
+       * Thêm file với queue
+       */
+      setUploadQueue(FILES.map((file) => file.name));
 
       try {
-        const uploadPromises = files.map((file) => uploadFile(file));
-        const uploadedAttachments = await Promise.all(uploadPromises);
-        const successfullyUploadedAttachments = uploadedAttachments.filter(
+        /** Upload Promise */
+        const UPLOAD_PROMISE = FILES.map((file) => uploadFile(file));
+        /**
+         * Lay danh sach attachment
+         */
+        const UPLOADED_ATTACHMENTS = await Promise.all(UPLOAD_PROMISE);
+        /**
+         * Lay attachment khong bi loi
+         */
+        const SUCCESSFULLY_ATTACHMENTS = UPLOADED_ATTACHMENTS.filter(
           (attachment) => attachment !== undefined,
         );
-
+        /**
+         * Lưu vào state
+         */
         setAttachments((currentAttachments) => [
           ...currentAttachments,
-          ...successfullyUploadedAttachments,
+          ...SUCCESSFULLY_ATTACHMENTS,
         ]);
       } catch (error) {
         console.error('Error uploading files!', error);
@@ -184,9 +292,13 @@ function PureMultimodalInput({
     },
     [setAttachments],
   );
-
+  /**
+   * Hàm scroll to bottom
+   */
   const { isAtBottom, scrollToBottom } = useScrollToBottom();
-
+  /**
+   * Hàm scroll to bottom khi submit
+   */
   useEffect(() => {
     if (status === 'submitted') {
       scrollToBottom();
@@ -220,7 +332,7 @@ function PureMultimodalInput({
         )}
       </AnimatePresence>
 
-      {messages.length === 0 &&
+      {/* {messages.length === 0 &&
         attachments.length === 0 &&
         uploadQueue.length === 0 && (
           <SuggestedActions
@@ -228,18 +340,49 @@ function PureMultimodalInput({
             chatId={chatId}
             selectedVisibilityType={selectedVisibilityType}
           />
-        )}
+        )} */}
+
+      {/** Smart prompts suggestions */}
+      <div className="flex flex-row gap-2">
+        {LIST_TAGS.map((tag, index) => (
+          <TagWithIcon
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+            key={index}
+            type={tag.type}
+            label={tag.label}
+            onClick={() => {
+              setSuggestedMode(tag.type);
+              if (tag.type === 'more') {
+                return;
+              }
+              setInput((prev) => {
+                const regex = /@\w+\s/; // Tìm bất kỳ tag nào dạng @type
+                if (regex.test(prev)) {
+                  // Nếu đã có tag, thay thế tag đầu tiên tìm thấy với tag mới
+                  // biome-ignore lint/style/useTemplate: <explanation>
+                  return prev.replace(regex, '@' + tag.type + ' ');
+                } else {
+                  // Nếu chưa có tag, thêm mới vào đầu
+                  // biome-ignore lint/style/useTemplate: <explanation>
+                  return '@' + tag.type + ' ' + prev;
+                }
+              });
+            }}
+            is_active={suggested_mode === tag.type}
+          />
+        ))}
+      </div>
 
       <input
         type="file"
         className="fixed -top-4 -left-4 size-0.5 opacity-0 pointer-events-none"
-        ref={fileInputRef}
+        ref={FILE_INPUT_REF}
         multiple
         onChange={handleFileChange}
         tabIndex={-1}
       />
 
-      {(attachments.length > 0 || uploadQueue.length > 0) && (
+      {(attachments.length > 0 || upload_queue.length > 0) && (
         <div
           data-testid="attachments-preview"
           className="flex flex-row gap-2 overflow-x-scroll items-end"
@@ -248,7 +391,7 @@ function PureMultimodalInput({
             <PreviewAttachment key={attachment.url} attachment={attachment} />
           ))}
 
-          {uploadQueue.map((filename) => (
+          {upload_queue.map((filename) => (
             <PreviewAttachment
               key={filename}
               attachment={{
@@ -262,49 +405,58 @@ function PureMultimodalInput({
         </div>
       )}
 
-      <Textarea
-        data-testid="multimodal-input"
-        ref={textareaRef}
-        placeholder="Send a message..."
-        value={input}
-        onChange={handleInput}
-        className={cx(
-          'min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base bg-muted pb-10 dark:border-zinc-700',
-          className,
-        )}
-        rows={2}
-        autoFocus
-        onKeyDown={(event) => {
-          if (
-            event.key === 'Enter' &&
-            !event.shiftKey &&
-            !event.nativeEvent.isComposing
-          ) {
-            event.preventDefault();
+      <div>
+        <Textarea
+          data-testid="multimodal-input"
+          ref={TEXT_AREA_REF}
+          placeholder="Send a message..."
+          value={input}
+          onChange={handleInput}
+          className={cx(
+            'min-h-6 max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base bg-muted pb-14 dark:border-zinc-700',
+            className,
+          )}
+          rows={2}
+          autoFocus
+          onKeyDown={(event) => {
+            if (
+              event.key === 'Enter' &&
+              !event.shiftKey &&
+              !event.nativeEvent.isComposing
+            ) {
+              event.preventDefault();
 
-            if (status !== 'ready') {
-              toast.error('Please wait for the model to finish its response!');
-            } else {
-              submitForm();
+              if (status !== 'ready') {
+                toast.error(
+                  'Please wait for the model to finish its response!',
+                );
+              } else {
+                submitForm();
+              }
             }
-          }
-        }}
-      />
+          }}
+        />
 
-      <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start">
-        <AttachmentsButton fileInputRef={fileInputRef} status={status} />
-      </div>
+        <div className="absolute bottom-3 left-3 w-fit flex items-center gap-2 flex-row justify-start rounded-full">
+          <AttachmentsButton fileInputRef={FILE_INPUT_REF} status={status} />
 
-      <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row justify-end">
-        {status === 'submitted' ? (
-          <StopButton stop={stop} setMessages={setMessages} />
-        ) : (
-          <SendButton
-            input={input}
-            submitForm={submitForm}
-            uploadQueue={uploadQueue}
+          <ThinkMode
+            onClick={() => setAiMode('think')}
+            is_active={ai_mode === 'think'}
           />
-        )}
+        </div>
+
+        <div className="absolute bottom-3 right-3 p-2 w-fit flex flex-row justify-end">
+          {status === 'submitted' ? (
+            <StopButton stop={stop} setMessages={setMessages} />
+          ) : (
+            <SendButton
+              input={input}
+              submitForm={submitForm}
+              uploadQueue={upload_queue}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -333,7 +485,7 @@ function PureAttachmentsButton({
   return (
     <Button
       data-testid="attachments-button"
-      className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
+      className="rounded-full p-2 h-fit border-2 dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
       onClick={(event) => {
         event.preventDefault();
         fileInputRef.current?.click();
@@ -341,7 +493,7 @@ function PureAttachmentsButton({
       disabled={status !== 'ready'}
       variant="ghost"
     >
-      <PaperclipIcon size={14} />
+      <PlusCircleIcon className="size-5" />
     </Button>
   );
 }

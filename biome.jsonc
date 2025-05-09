@@ -114,8 +114,8 @@
     }
   },
   "css": {
-    "formatter": { "enabled": false },
-    "linter": { "enabled": false }
+    "formatter": { "enabled": true },
+    "linter": { "enabled": true }
   },
   "organizeImports": { "enabled": false },
   "overrides": [

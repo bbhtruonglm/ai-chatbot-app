@@ -34,6 +34,7 @@ import {
 } from 'resumable-stream';
 import { after } from 'next/server';
 import type { Chat } from '@/lib/db/schema';
+import { Title } from '@radix-ui/react-dialog';
 
 export const maxDuration = 60;
 
@@ -68,7 +69,7 @@ export async function POST(request: Request) {
   } catch (_) {
     return new Response('Invalid request body', { status: 400 });
   }
-
+  console.log(requestBody, 'checkkk');
   try {
     const { id, message, selectedChatModel, selectedVisibilityType } =
       requestBody;
@@ -78,7 +79,7 @@ export async function POST(request: Request) {
     if (!session?.user) {
       return new Response('Unauthorized', { status: 401 });
     }
-
+    console.log(session.user, 'session.user');
     const userType: UserType = session.user.type;
 
     const messageCount = await getMessageCountByUserId({
@@ -94,14 +95,16 @@ export async function POST(request: Request) {
         },
       );
     }
-
+    console.log(id, 'id');
     const chat = await getChatById({ id });
-
+    console.log(chat, 'chat');
     if (!chat) {
+      console.log('new chat');
       const title = await generateTitleFromUserMessage({
         message,
       });
-
+      // let title = 'Search for a topic';
+      console.log(title, 'title')
       await saveChat({
         id,
         userId: session.user.id,
@@ -237,7 +240,7 @@ export async function POST(request: Request) {
       return new Response(stream);
     }
   } catch (_) {
-    return new Response('An error occurred while processing your request!', {
+    return new Response('An error occurred while processing your request!!!!', {
       status: 500,
     });
   }

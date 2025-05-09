@@ -72,6 +72,15 @@ const config: Config = {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        keyframes: {
+          glow: {
+            '0%, 100%': { opacity: '0.3' },
+            '50%': { opacity: '0.6' },
+          },
+        },
+        animation: {
+          glow: 'glow 3s ease-in-out infinite',
+        },
       },
     },
   },
