@@ -89,8 +89,9 @@ function PureMultimodalInput({
       type: 'more',
     },
   ];
-
+  /** Text area */
   const TEXT_AREA_REF = useRef<HTMLTextAreaElement>(null);
+  /** width */
   const { width } = useWindowSize();
   /** Check độ suggested */
   const [suggested_mode, setSuggestedMode] = useState('');
@@ -136,10 +137,13 @@ function PureMultimodalInput({
    */
   useEffect(() => {
     if (TEXT_AREA_REF.current) {
-      const domValue = TEXT_AREA_REF.current.value;
-      // Prefer DOM value over localStorage to handle hydration
-      const finalValue = domValue || local_storage_input || '';
-      setInput(finalValue);
+      /** DOM value */
+      const DOM_VALUE = TEXT_AREA_REF.current.value;
+      /** Prefer DOM value over localStorage to handle hydration */
+      const FINAL_VALUE = DOM_VALUE || local_storage_input || '';
+      /** Lưu lại input */
+      setInput(FINAL_VALUE);
+      /** Tính toán lại chiều cao */
       adjustHeight();
     }
     // Only run once after hydration
@@ -301,7 +305,7 @@ function PureMultimodalInput({
   /**
    * Hàm scroll to bottom
    */
-  const { isAtBottom, scrollToBottom } = useScrollToBottom();
+  const { isAtBottom: IS_AT_BOTTOM, scrollToBottom } = useScrollToBottom();
   /**
    * Hàm scroll to bottom khi submit
    */
@@ -314,7 +318,7 @@ function PureMultimodalInput({
   return (
     <div className="relative flex w-full flex-col bg-transparent ">
       <AnimatePresence>
-        {!isAtBottom && (
+        {!IS_AT_BOTTOM && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -490,7 +494,7 @@ function PureMultimodalInput({
                       submitForm();
                     }}
                     // uploadQueue={upload_queue}
-                    className="p-2 bg-white rounded-full cursor-pointer "
+                    className="p-2 bg-white rounded-full cursor-pointer"
                   >
                     <ArrowUpIcon1 className="size-5 text-black flex-shrink-0" />
                   </button>

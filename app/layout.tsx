@@ -8,9 +8,9 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from 'sonner';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://chat.vercel.ai'),
-  title: 'Next.js Chatbot Template',
-  description: 'Next.js chatbot template using the AI SDK.',
+  // metadataBase: new URL('https://chat.vercel.ai'),
+  title: 'Retion Chatbot',
+  description: 'Retion Chatbot',
 };
 
 export const viewport = {

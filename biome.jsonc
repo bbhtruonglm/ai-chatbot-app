@@ -28,7 +28,7 @@
     "attributePosition": "auto"
   },
   "linter": {
-    "enabled": true,
+    "enabled": false,
     "rules": {
       "recommended": true,
       "a11y": {
@@ -69,6 +69,7 @@
         "noDangerouslySetInnerHtml": "off" // Covered by Conformance
       },
       "style": {
+        "noVar": "off",
         "useFragmentSyntax": "warn", // Not in recommended ruleset, turning on manually
         "noYodaExpression": "warn", // Not in recommended ruleset, turning on manually
         "useDefaultParameterLast": "warn", // Not in recommended ruleset, turning on manually

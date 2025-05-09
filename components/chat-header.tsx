@@ -22,6 +22,8 @@ import {
   PencilSquareIcon,
 } from '@heroicons/react/24/solid';
 import { ArrowDown } from 'lucide-react';
+import PopoverHistory from './Popover/PopoverHistory';
+import PopoverSetup from './Popover/PopoverSetup';
 
 function PureChatHeader({
   chatId,
@@ -36,9 +38,11 @@ function PureChatHeader({
   isReadonly: boolean;
   session: Session;
 }) {
-  const router = useRouter();
+  /** Router */
+  const ROUTER = useRouter();
+  /** Trạng thái đóng mở */
   const { open } = useSidebar();
-
+  /** Width của window */
   const { width: windowWidth } = useWindowSize();
 
   return (
@@ -101,28 +105,19 @@ function PureChatHeader({
         {/* biome-ignore lint/nursery/noStaticElementInteractions: <explanation> */}
         <div
           onClick={() => {
-            router.push('/');
-            router.refresh();
+            ROUTER.push('/');
+            ROUTER.refresh();
           }}
           className="cursor-pointer hidden md:flex"
         >
           <PencilSquareIcon className="size-6" />
         </div>
-        <div>
-          <Bars3BottomLeftIcon className="size-6 cursor-pointer hidden md:flex" />
-        </div>
-        <div className="flex items-center gap-2 cursor-pointer">
-          <Image
-            src="/images/Avatar.png"
-            alt="Avatar"
-            width={28}
-            height={28}
-            className="rounded-full"
-          />
-          <div className="hidden md:flex">
-            <ChevronDownIcon className="size-4 text-gray-500" />
-          </div>
-        </div>
+        {/* <div className="hidden md:flex cursor-pointer">
+          <Bars3BottomLeftIcon className="size-6 " />
+        </div> */}
+        <PopoverHistory user={session.user} />
+
+        <PopoverSetup user={session.user} />
       </div>
 
       {/* <Button

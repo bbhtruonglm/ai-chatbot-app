@@ -1,11 +1,5 @@
 'use client';
 
-import { ChevronUp } from 'lucide-react';
-import Image from 'next/image';
-import type { User } from 'next-auth';
-import { signOut, useSession } from 'next-auth/react';
-import { useTheme } from 'next-themes';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,17 +12,26 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { useRouter } from 'next/navigation';
-import { toast } from './toast';
+import { signOut, useSession } from 'next-auth/react';
+
+import { ChevronUp } from 'lucide-react';
+import Image from 'next/image';
 import { LoaderIcon } from './icons';
+import type { User } from 'next-auth';
 import { guestRegex } from '@/lib/constants';
+import { toast } from './toast';
+import { useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
 
 export function SidebarUserNav({ user }: { user: User }) {
-  const router = useRouter();
+  /** Router */
+  const ROUTER = useRouter();
+  /** Data session */
   const { data, status } = useSession();
+  /** Set Theme */
   const { setTheme, theme } = useTheme();
-
-  const isGuest = guestRegex.test(data?.user?.email ?? '');
+  /** Check if user is guest */
+  const IS_GUEST = guestRegex.test(data?.user?.email ?? '');
 
   return (
     <SidebarMenu>
@@ -60,7 +63,7 @@ export function SidebarUserNav({ user }: { user: User }) {
                   className="rounded-full"
                 />
                 <span data-testid="user-email" className="truncate">
-                  {isGuest ? 'Guest' : user?.email}
+                  {IS_GUEST ? 'Guest' : user?.email}
                 </span>
                 <ChevronUp className="ml-auto" />
               </SidebarMenuButton>
@@ -94,8 +97,8 @@ export function SidebarUserNav({ user }: { user: User }) {
                     return;
                   }
 
-                  if (isGuest) {
-                    router.push('/login');
+                  if (IS_GUEST) {
+                    ROUTER.push('/login');
                   } else {
                     signOut({
                       redirectTo: '/',
@@ -103,7 +106,7 @@ export function SidebarUserNav({ user }: { user: User }) {
                   }
                 }}
               >
-                {isGuest ? 'Login to your account' : 'Sign out'}
+                {IS_GUEST ? 'Login to your account' : 'Sign out'}
               </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
