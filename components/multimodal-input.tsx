@@ -37,6 +37,50 @@ import {
 } from '@heroicons/react/24/solid';
 import ThinkMode from './Tags/ThinkMode';
 import styles from './GradientCardStatic/GradientCard.module.scss';
+import ListeningLoader from './Listening/ListeningLoader';
+
+/**
+ * Khai báo global cho window
+ */
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+// Định nghĩa cho SpeechRecognitionEvent
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+interface SpeechRecognitionResult {
+  isFinal: boolean;
+  length: number;
+  [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionResultList {
+  length: number;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionEvent extends Event {
+  readonly resultIndex: number;
+  readonly results: SpeechRecognitionResultList;
+}
+
+/** Định nghĩa cho SpeechRecognition */
+type SpeechRecognition = new () => {
+  start: () => void;
+  stop: () => void;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onend: () => void;
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+};
+
 function PureMultimodalInput({
   chatId,
   input,
@@ -314,6 +358,57 @@ function PureMultimodalInput({
       scrollToBottom();
     }
   }, [status, scrollToBottom]);
+  /** Trạng thái đang bật micro */
+  const [is_listening, setIsListening] = useState(false);
+  /**Ref */
+  const RECOGNITION_REF = useRef<SpeechRecognition | null>(null);
+
+  useEffect(() => {
+    /**
+     * Khai báo SpeechRecognition
+     */
+    const SPEECH_RECOGNITION =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    /**
+     * Khai báo SpeechRecognition
+     */
+    if (!SPEECH_RECOGNITION) {
+      alert('Trình duyệt không hỗ trợ SpeechRecognition.');
+      return;
+    }
+    /**
+     * Khai báo SpeechRecognition
+     */
+    const RECOGNITION = new SPEECH_RECOGNITION();
+    /** Ngôn ngữ */
+    RECOGNITION.lang = 'vi-VN';
+    /**
+     * Trạng thái nghe
+     */
+    RECOGNITION.continuous = false;
+    /**
+     * Trạng thái dừng
+     */
+    RECOGNITION.interimResults = false;
+
+    /**
+     *  Hàm onresult
+     * @param event - Sự kiện onresult
+     */
+    RECOGNITION.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInput(transcript); // Lưu kết quả vào input
+      setIsListening(false);
+    };
+    /**
+     *  Hàm onend
+     */
+    RECOGNITION.onend = () => {
+      setIsListening(false); // Dừng trạng thái "đang nghe"
+    };
+
+    RECOGNITION_REF.current = RECOGNITION;
+  }, []);
 
   return (
     <div className="relative flex w-full flex-col bg-transparent ">
@@ -470,8 +565,25 @@ function PureMultimodalInput({
 
           <div className="absolute bottom-3 right-3 rounded-full w-fit flex flex-row justify-end">
             {!input && status !== 'submitted' ? (
-              <div className="p-2 bg-white rounded-full cursor-pointer">
-                <MicrophoneIcon className="size-5 text-black" />
+              <div
+                onClick={() => {
+                  /**
+                   * Nếu dang nghe thi dung, nguoc lai bat dau nghe
+                   */
+                  if (is_listening) {
+                    RECOGNITION_REF.current?.stop(); // Dừng và sẽ kích hoạt .onresult
+                  } else {
+                    RECOGNITION_REF.current?.start(); // Bắt đầu nghe
+                    setIsListening(true);
+                  }
+                }}
+                className="p-2 bg-white rounded-full cursor-pointer"
+              >
+                {is_listening ? (
+                  <ListeningLoader />
+                ) : (
+                  <MicrophoneIcon className="size-5 text-black" />
+                )}
               </div>
             ) : (
               <div>
