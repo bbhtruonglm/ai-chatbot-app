@@ -22,7 +22,8 @@ export default function PopupHistory({ user }: { user: User }) {
           <Bars3BottomLeftIcon className="size-6 cursor-pointer" />
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-80 max-h-96 overflow-hidden overflow-y-auto">
+      <PopoverContent className="w-80 max-h-96 mt-2.5 overflow-hidden overflow-y-auto border-2">
+        {/* <div className="absolute rotate-45 border-8 border-transparent border-t-background rounded border-l-background top-0 right-24 translate-y-1 transform -translate-x-1/2 z-1"></div> */}
         <SidebarHistory user={user} />
       </PopoverContent>
     </Popover>

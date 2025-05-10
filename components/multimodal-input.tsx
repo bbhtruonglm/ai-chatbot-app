@@ -469,7 +469,7 @@ function PureMultimodalInput({
           </div>
 
           <div className="absolute bottom-3 right-3 rounded-full w-fit flex flex-row justify-end">
-            {!input ? (
+            {!input && status !== 'submitted' ? (
               <div className="p-2 bg-white rounded-full cursor-pointer">
                 <MicrophoneIcon className="size-5 text-black" />
               </div>
@@ -477,8 +477,12 @@ function PureMultimodalInput({
               <div>
                 {status === 'submitted' ? (
                   // <StopButton stop={stop} setMessages={setMessages} />
-                  <div className="p-2 bg-white rounded-full cursor-pointer">
-                    <StopCircleIcon className="size-5 text-black" />
+                  <div className="p-2 bg-zinc-500 text-black rounded-full cursor-pointer">
+                    {/* <StopCircleIcon className="size-5 text-black" /> */}
+                    <ArrowUpIcon
+                      size={20}
+                      // className="size-5 text-black"
+                    />
                   </div>
                 ) : (
                   // <SendButton
@@ -494,9 +498,12 @@ function PureMultimodalInput({
                       submitForm();
                     }}
                     // uploadQueue={upload_queue}
-                    className="p-2 bg-white rounded-full cursor-pointer"
+                    className="p-2 bg-white text-black rounded-full cursor-pointer"
                   >
-                    <ArrowUpIcon1 className="size-5 text-black flex-shrink-0" />
+                    <ArrowUpIcon
+                      size={20}
+                      // className="size-5 text-black flex-shrink-0"
+                    />
                   </button>
                 )}
               </div>

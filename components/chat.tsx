@@ -88,28 +88,44 @@ export function Chat({
   }, []);
   /** Search Params */
   const SEARCH_PARAMS = useSearchParams();
+  /**  Lấy query */
   const QUERY = SEARCH_PARAMS.get('query');
-
+  /**
+   * Kiểm tra có query không
+   */
   const [has_appended_query, setHasAppendedQuery] = useState(false);
-
+  /**
+   * Nếu co query thi append
+   * @param QUERY
+   */
   useEffect(() => {
     if (QUERY && !has_appended_query) {
       append({
         role: 'user',
         content: QUERY,
       });
-
+      /**
+       * Đánh dấu là đã append
+       */
       setHasAppendedQuery(true);
+      /** Đối với id chat, thay đổi điều hướng trang */
       window.history.replaceState({}, '', `/chat/${id}`);
     }
   }, [QUERY, append, has_appended_query, id]);
-
+  /**
+   * Lay danh sach vote
+   */
   const { data: votes } = useSWR<Array<Vote>>(
     messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
     fetcher,
   );
-
+  /**
+   * Lay danh sach attachment
+   */
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+  /**
+   * Lấy trạng thái của artifact
+   */
   const IS_ARTIFACT_VISIBLE = useArtifactSelector((state) => state.isVisible);
 
   return (
@@ -155,7 +171,7 @@ export function Chat({
         </div>
       </div>
 
-      {/* <Artifact
+      <Artifact
         chatId={id}
         input={input}
         setInput={setInput}
@@ -171,7 +187,7 @@ export function Chat({
         votes={votes}
         isReadonly={isReadonly}
         selectedVisibilityType={visibilityType}
-      /> */}
+      />
     </div>
   );
 }

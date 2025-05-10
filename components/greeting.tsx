@@ -23,16 +23,16 @@ export const Greeting = () => {
           transition={{ delay: 0.5 }}
           className="text-xl font-medium"
         >
-          Hello there!
+          Chào buổi sáng, Mike.
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           transition={{ delay: 0.6 }}
-          className="text-sm text-zinc-300"
+          className="text-sm text-zinc-300 font-medium"
         >
-          How can I help you today?
+          Tôi có thể giúp gì bạn hôm nay?
         </motion.div>
       </div>
     </div>

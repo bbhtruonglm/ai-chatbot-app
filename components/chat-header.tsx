@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
 
 import { ModelSelector } from '@/components/model-selector';
@@ -25,6 +25,9 @@ import { ArrowDown } from 'lucide-react';
 import PopoverHistory from './Popover/PopoverHistory';
 import PopoverSetup from './Popover/PopoverSetup';
 import PopoverHistoryBar2 from './Popover/PopoverHistoryBar2';
+import { SidebarToggleCustom } from './sidebar-toggle-custom';
+
+import { usePathname } from 'next/navigation';
 
 function PureChatHeader({
   chatId,
@@ -41,6 +44,11 @@ function PureChatHeader({
 }) {
   /** Router */
   const ROUTER = useRouter();
+  /** Path_name */
+  const PATH_NAME = usePathname();
+  /** Chat page */
+  const IS_CHAT_PAGE = PATH_NAME.startsWith('/chat/');
+
   /** Trạng thái đóng mở */
   const { open } = useSidebar();
   /** Width của window */
@@ -48,9 +56,8 @@ function PureChatHeader({
 
   return (
     <header className="flex sticky top-0 bg-background py-3 px-3 items-center justify-between md:px-8 gap-2">
-      {/* <SidebarToggle /> */}
       <div className="">
-        <div className="hidden md:flex">
+        <div className="hidden md:flex md:w-40">
           <Image
             src="/images/retion-agent.svg"
             alt="Retion Logo"
@@ -60,7 +67,8 @@ function PureChatHeader({
         </div>
         <div className="md:hidden">
           {/* <PopoverHistoryBar2 user={session.user} /> */}
-          <Bars2Icon className="size-6" />
+          {/* <Bars2Icon className="size-6" /> */}
+          <SidebarToggleCustom />
         </div>
       </div>
 
@@ -105,20 +113,26 @@ function PureChatHeader({
           </Tooltip>
         )} */}
         {/* biome-ignore lint/nursery/noStaticElementInteractions: <explanation> */}
-        <div
-          onClick={() => {
-            ROUTER.push('/');
-            ROUTER.refresh();
-          }}
-          className="cursor-pointer hidden md:flex"
-        >
-          <PencilSquareIcon className="size-6" />
-        </div>
+        {
+          <div
+            onClick={() => {
+              ROUTER.push('/');
+              ROUTER.refresh();
+            }}
+            className={`${!IS_CHAT_PAGE ? 'hidden' : 'flex'} cursor-pointer md:flex`}
+          >
+            <PencilSquareIcon className="size-6" />
+          </div>
+        }
+
         <div className="hidden md:flex cursor-pointer">
           <PopoverHistory user={session.user} />
         </div>
-
-        <PopoverSetup user={session.user} />
+        <div
+          className={`${IS_CHAT_PAGE ? 'hidden' : 'flex'} cursor-pointer md:flex`}
+        >
+          <PopoverSetup user={session.user} />
+        </div>
       </div>
 
       {/* <Button
