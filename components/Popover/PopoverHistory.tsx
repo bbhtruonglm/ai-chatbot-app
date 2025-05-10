@@ -7,6 +7,7 @@ import {
 import { Bars3BottomLeftIcon } from '@heroicons/react/24/solid';
 import { SidebarHistory } from '../sidebar-history';
 import { User } from 'next-auth';
+import styles from '../GradientCardStatic/GradientCard.module.scss';
 import { useState } from 'react';
 
 export default function PopupHistory({ user }: { user: User }) {
