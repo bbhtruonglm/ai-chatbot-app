@@ -16,13 +16,13 @@ import { xai } from '@ai-sdk/xai';
 
 export const myProvider = customProvider({
   languageModels: {
-    'chat-model': google('gemini-2.0-flash'),
+    'chat-model': google('gemini-1.5-flash'),
     'chat-model-reasoning': wrapLanguageModel({
       model: google('grok-3-mini-beta'),
       middleware: extractReasoningMiddleware({ tagName: 'think' }),
     }),
-    'title-model': google('gemini-2.0-flash'),
-    'artifact-model': google('gemini-2.0-flash'),
+    'title-model': google('gemini-1.5-flash'),
+    'artifact-model': google('gemini-1.5-flash'),
   },
   // imageModels: {
   //   'small-model': xai.image('grok-2-image'),
