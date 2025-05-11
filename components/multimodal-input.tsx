@@ -44,10 +44,11 @@ import ListeningLoader from './Listening/ListeningLoader';
  */
 declare global {
   interface Window {
-    SpeechRecognition: any;
-    webkitSpeechRecognition: any;
+    SpeechRecognition: SpeechRecognitionConstructor;
+    webkitSpeechRecognition: SpeechRecognitionConstructor;
   }
 }
+
 // Định nghĩa cho SpeechRecognitionEvent
 interface SpeechRecognitionAlternative {
   transcript: string;
@@ -70,16 +71,21 @@ interface SpeechRecognitionEvent extends Event {
   readonly results: SpeechRecognitionResultList;
 }
 
-/** Định nghĩa cho SpeechRecognition */
-type SpeechRecognition = new () => {
+// Instance type: đối tượng thực khi gọi new SpeechRecognition()
+interface ISpeechRecognition extends EventTarget {
   start: () => void;
   stop: () => void;
-  onresult: (event: SpeechRecognitionEvent) => void;
-  onend: () => void;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onend: (() => void) | null;
   lang: string;
   continuous: boolean;
   interimResults: boolean;
-};
+}
+
+// Constructor type: lớp khởi tạo SpeechRecognition
+interface SpeechRecognitionConstructor {
+  new (): ISpeechRecognition;
+}
 
 function PureMultimodalInput({
   chatId,
@@ -361,7 +367,9 @@ function PureMultimodalInput({
   /** Trạng thái đang bật micro */
   const [is_listening, setIsListening] = useState(false);
   /**Ref */
-  const RECOGNITION_REF = useRef<SpeechRecognition | null>(null);
+  const RECOGNITION_REF = useRef<ISpeechRecognition | null>(null);
+
+  console.log(RECOGNITION_REF, 'RECOGNITION_REF');
 
   useEffect(() => {
     /**
