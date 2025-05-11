@@ -2,7 +2,6 @@ import './globals.css';
 
 import { Geist, Geist_Mono } from 'next/font/google';
 
-import type { Metadata } from 'next';
 import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from 'sonner';
@@ -13,7 +12,7 @@ export const metadata = {
   openGraph: {
     title: 'Terminal',
     description: 'Công cụ Chatbot AI',
-    images: [], // Tạm thời xóa thumbnail nên để trống
+    image: [], // Tạm thời xóa thumbnail nên để trống
   },
 };
 
