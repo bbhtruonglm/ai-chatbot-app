@@ -7,10 +7,14 @@ import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from 'sonner';
 
-export const metadata: Metadata = {
-  // metadataBase: new URL('https://chat.vercel.ai'),
-  title: 'Retion Chatbot',
-  description: 'Retion Chatbot',
+export const metadata = {
+  title: 'Terminal',
+  description: 'Công cụ Chatbot AI',
+  openGraph: {
+    title: 'Terminal',
+    description: 'Công cụ Chatbot AI',
+    images: [], // Tạm thời xóa thumbnail nên để trống
+  },
 };
 
 export const viewport = {
